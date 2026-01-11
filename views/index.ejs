@@ -2,24 +2,24 @@
 <% if(locals.window){%>
     <div class="my-1 pt-4 pb-4 text-center create-container">
         <div style="background-color: rgb(255, 255, 255 ,0.5);">
-    <h1 class="display-5 mb-1 fw-bold"><% if(window==='create'){%> Create a new Blog<%}else{%> Updating <%}%></h1>
-    <form id="blogForm" action="/" method="<%if(window==='create'){%>POST<%}else{%>PATCH<%}%>">
-        <div class="input-container">
-            <label for="TitleTextbox">Title</label>
-            <%if(locals.title){ console.log(title)}%>
-            <input required type="text" name="title" <% if(locals.title){%>value="<%=title%>" <%}%> id="TitleTextbox" <%if(window==="update"){%>disabled<%}%>>
-        </div> 
-        <div>
-            <label for="BlogText">Text</label>
-            <textarea id="BlogText" name="text"><%if(locals.text){%><%=text%><%}%> </textarea>
+            <h1 class="display-5 mb-1 fw-bold"><% if(window==='create'){%> Create a new Blog<%}else{%> Updating <%}%></h1>
+            <form id="blogForm" action="/" method="<%if(window==='create'){%>POST<%}else{%>PATCH<%}%>">
+                <div class="input-container">
+                    <label for="TitleTextbox"><span class="required-icon">*</span>Title</label>
+                    <input required type="text" name="title" <% if(locals.title){%>value="<%=title%>" <%}%> id="TitleTextbox">
+                    <div class="error" id="nameError">Please fill out this field.</div>
+                </div> 
+                <div>
+                    <label for="BlogText">Text</label>
+                    <textarea id="BlogText" name="text"><%if(locals.text){%><%=text%><%}%> </textarea>
+                </div>
+                <div class="col-lg-6 pb-2 mx-auto"> 
+                    <div class="d-grid gap-2 d-sm-flex justify-content-sm-center"> 
+                        <input class="btn btn-success" <%if(window==='create'){%>type="submit"<%}else{%>type="button" onclick="doPatch();"<%}%> value="Submit">
+                    </div> 
+                </div> 
+            </form>
         </div>
-        <div class="col-lg-6 pb-2 mx-auto"> 
-            <div class="d-grid gap-2 d-sm-flex justify-content-sm-center"> 
-                <input class="btn btn-success" <%if(window==='create'){%>type="submit"<%}else{%>type="button" onclick="doPatch();"<%}%> value="Submit">
-            </div> 
-        </div> 
-    </form>
-    </div>
     </div>
 <%}else{%>
 <div class="px-4 my-1 text-center border-bottom start-page"> 
@@ -40,6 +40,11 @@
 </div>
 <%}%>
 <script>function doPatch(){
+    if(blogForm.TitleTextbox.value.length==0){
+        nameError.style.display = "block";
+        //nameInput.classList.add("error-border");
+        return;
+    }
     let content = {
             title: blogForm.TitleTextbox.value,
             text: blogForm.BlogText.value

@@ -92,3 +92,20 @@
     fill: #5b9e24;
     margin-left:1em;
 }
+
+.error {
+        color: red;
+        font-size: 0.9em;
+        margin-top: 4px;
+        display: none;
+}
+
+.required-icon{
+    color: red;
+    display: inline;
+    font-size: 1em;
+}
+
+#TitleTextbox{
+    border: 2pt, solid, red;
+}
