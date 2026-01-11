@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-sRIl4kxILFvY47J16cr9ZwB07vP4J8+LH7qKQnuqkuIAvNWLzeN8tE5YBujZqJLB" crossorigin="anonymous">
+    <link rel="stylesheet" href="styles/layout.css">
+    <link rel="stylesheet" href="styles/style.css">
+</head>
+<body>
+    <header>
+        <% if(locals.window){%>
+            <button  type="button" class="btn btn-primary" onclick="window.location.href='/'"><</button>
+            <%if(locals.title){%>
+                <button type="button" class="btn btn-danger" onclick="doDelete();">delete</button>
+            <%}%>
+        <%}else{%>
+            <button type="button" class="btn btn-primary" onclick="window.location.href='/create'">new</button>
+        <%}%>
+    </header>
+    <script>function doDelete(){
+        let content = {
+            title: blogForm.TitleTextbox.value,
+        };
+        fetch("/",{
+            method:'DELETE',
+            headers:{
+                'Content-type': 'application/json; charset=UTF-8',
+                'Accept': 'application/json'
+            },
+            body: JSON.stringify(content)
+        }).then((response) => {
+            console.log('PATCH Response.status: ', response.status);
+            window.location.href = "/";
+        });
+    }</script>
+</body>
+</html>
+

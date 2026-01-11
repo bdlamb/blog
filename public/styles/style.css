@@ -1,0 +1,94 @@
+.blog-photo{
+    max-width: 25rem;
+    max-height: 25rem;
+}
+
+.blog-container{
+    min-width: 100%;
+    min-height: 20em;
+    border:  2pt solid green;
+}
+
+.start-page{
+    justify-items: center;
+    
+}
+
+.start-page-top{
+    background-image: url("../images/fantasy-small.gif");
+    background-repeat: no-repeat;
+    background-size: cover;
+}
+
+.create-container{
+    justify-items: center;
+    background-image: url("../images/path.png");
+    background-repeat: no-repeat;
+    background-size: cover;
+}
+
+.input-container{
+    margin-bottom: 2em;
+}
+
+ label{
+    display: block;
+    color: #218b2f;
+    font-size: 3em;
+    margin-bottom: .5em;
+ }
+
+ input[type=text]{
+    min-width: 50vh;
+ }
+ textarea{
+    min-width: 50vh;
+    min-height: 50vh;
+    margin-left: 10pt;
+    margin-right: 10pt;
+ }
+
+ h1{
+    color: blue;
+ }
+
+ h2{
+    color: #218b2f;
+ }
+
+ a{
+    margin: 5pt;
+ }
+
+ footer{
+    background-image: url("../images/leaf.gif");
+    background-size: contain;
+    background-repeat: round;
+}
+
+.caption_email{
+    font-size: 2em;
+    font-family: Italianno;
+    color:#5b9e24;
+    text-wrap: none;
+    margin-left: 1em;
+}
+
+.fa {
+  padding: 20px;
+  font-size: 26px;
+  width: 50px;
+  text-align: center;
+  text-decoration: none;
+  margin: 5px 2px;
+}
+
+.fa-facebook {
+  background: #3B5998;
+  color: white;
+}
+
+.icon-footer{
+    fill: #5b9e24;
+    margin-left:1em;
+}

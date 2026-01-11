@@ -1,0 +1,61 @@
+<%-include("partials/header.ejs")%>
+<% if(locals.window){%>
+    <div class="my-1 pt-4 pb-4 text-center create-container">
+        <div style="background-color: rgb(255, 255, 255 ,0.5);">
+    <h1 class="display-5 mb-1 fw-bold"><% if(window==='create'){%> Create a new Blog<%}else{%> Updating <%}%></h1>
+    <form id="blogForm" action="/" method="<%if(window==='create'){%>POST<%}else{%>PATCH<%}%>">
+        <div class="input-container">
+            <label for="TitleTextbox">Title</label>
+            <%if(locals.title){ console.log(title)}%>
+            <input required type="text" name="title" <% if(locals.title){%>value="<%=title%>" <%}%> id="TitleTextbox" <%if(window==="update"){%>disabled<%}%>>
+        </div> 
+        <div>
+            <label for="BlogText">Text</label>
+            <textarea id="BlogText" name="text"><%if(locals.text){%><%=text%><%}%> </textarea>
+        </div>
+        <div class="col-lg-6 pb-2 mx-auto"> 
+            <div class="d-grid gap-2 d-sm-flex justify-content-sm-center"> 
+                <input class="btn btn-success" <%if(window==='create'){%>type="submit"<%}else{%>type="button" onclick="doPatch();"<%}%> value="Submit">
+            </div> 
+        </div> 
+    </form>
+    </div>
+    </div>
+<%}else{%>
+<div class="px-4 my-1 text-center border-bottom start-page"> 
+    <div class="col-12 start-page-top"> 
+        <h1 class="display-4 fw-bold">Brians Blog About Stuff</h1> 
+        <img class="blog-photo" src="images/start.png">
+        <h2>Blogs</h2>
+    </div> 
+    <div class="overflow-hidden blog-container" style="max-height: 30vh;"> 
+        <div class="container px-5 blog-container" id="createdBlogConatianer">
+            <%if(locals.blogData){%>
+                <%for(var i=0;i<blogData.length;i++){%>
+                    <a href="/update?title=<%=blogData[i]%>"><%=blogData[i]%></a>
+                <%}%>
+            <%}%>
+        </div> 
+    </div> 
+</div>
+<%}%>
+<script>function doPatch(){
+    let content = {
+            title: blogForm.TitleTextbox.value,
+            text: blogForm.BlogText.value
+    };
+        fetch("/",{
+            method:'PATCH',
+            headers:{
+                'Content-type': 'application/json; charset=UTF-8',
+                'Accept': 'application/json'
+            },
+            body: JSON.stringify(content)
+        }).then((response) => {
+            console.log('PATCH Response.status: ', response.status);
+            window.location.href = "/";
+        });
+    }
+</script>
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/js/bootstrap.bundle.min.js" integrity="sha384-FKyoEForCGlyvwx9Hj09JcYn3nv7wiPVlz7YYwJrWVcXK/BmnVDxM+D2scQbITxI" crossorigin="anonymous"></script>
+<%-include("partials/footer.ejs")%>

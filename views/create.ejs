@@ -1,0 +1,20 @@
+<%-include("partials/header-create.ejs")%>
+<div class="my-5 text-center create-container"> 
+    <div class="w3-example">
+        <h3><%if(window==="create"){
+            Create
+        <%}else{%>
+            Update
+        <%}%> 
+        </h3>
+<div class="w3-white w3-padding notranslate">
+<form action="/action_page.php" target="_blank">
+  <label for="title">Title:</label><br>
+  <input type="text" id="title" name="title" value=""><br>
+  <label for="text">Text</label><br>
+  <textarea id="text" name="text"></textarea>
+  <input type="submit" value="Submit">
+</form> 
+</div>
+</div>
+</div>
