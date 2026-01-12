@@ -23,17 +23,19 @@
         let content = {
             title: blogForm.TitleTextbox.value,
         };
-        fetch("/",{
+        if(confirm(`Are you sure you want to delete blog titled: ${content.title}`)){
+            fetch("/",{
             method:'DELETE',
             headers:{
                 'Content-type': 'application/json; charset=UTF-8',
                 'Accept': 'application/json'
             },
-            body: JSON.stringify(content)
-        }).then((response) => {
-            console.log('PATCH Response.status: ', response.status);
-            window.location.href = "/";
-        });
+                body: JSON.stringify(content)
+            }).then((response) => {
+                console.log('PATCH Response.status: ', response.status);
+                window.location.href = "/";
+            });
+        }
     }</script>
 </body>
 </html>
