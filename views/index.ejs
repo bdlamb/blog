@@ -6,7 +6,8 @@
             <form id="blogForm" action="/upload" method="<%if(window==='create'){%>POST<%}else{%>PATCH<%}%>" enctype="multipart/form-data">
                 <div class="input-container">
                     <label for="TitleTextbox"><span class="required-icon">*</span>Title</label>
-                    <input required type="text" name="title" <% if(locals.title){%>value="<%=title%>" <%}%> id="TitleTextbox">
+                    <input required type="text" name="title" <% if(locals.title){%>value="<%=title%>" <%}%> id="TitleTextbox" onchange="fixInput();" oninput="validateInput();">
+                    <p style="color: red;">Only characters,numbers, - , _ and spaces allowed for the title.</p>
                     <div class="error" id="nameError">Please fill out this field.</div>
                 </div> 
                 <div>
@@ -15,12 +16,13 @@
                 </div>
                 <%if(window=="create"){%>
                     <div class="input-container">
+                        <label for="imageInput"><span class="required-icon">*</span>Image</label>
                         <input required type="file" accept="image/*" id="imageInput" name="image">
                     </div>
                 <%}%>
                 <div class="col-lg-6 pb-2 mx-auto"> 
                     <div class="d-grid gap-2 d-sm-flex justify-content-sm-center"> 
-                        <input class="btn btn-success" <%if(window==='create'){%>type="submit"<%}else{%>type="button" onclick="doPatch();"<%}%> value="Submit" onsubmit="return(validate())">
+                        <input class="btn btn-success" type="button" <%if(window==='create'){%>onclick="doCreate();"<%}else{%>onclick="doPatch();"<%}%> value="Submit" >
                     </div> 
                 </div> 
             </form>
@@ -56,7 +58,33 @@
     </div> 
 </div>
 <%}%>
-<script>function doPatch(){
+<script>
+function doCreate(){
+    /*let content = {
+        title: blogForm.TitleTextbox.value,
+        text: blogForm.BlogText.value,
+        image:blogForm.imageInput.files[0]
+    };*/
+    const formData=new FormData();
+    formData.append('title',blogForm.TitleTextbox.value);
+    formData.append('text',blogForm.BlogText.value);
+    formData.append('image',blogForm.imageInput.files[0])
+    //var file=blogForm.imageInput.files[0];
+    fetch("/",{
+        method:'POST',
+            body: formData,
+        }).then((response) => {
+            if(response.status=="404"){
+                alert("Blog with that title already exists");
+            }
+            else{
+                alert("blog created");
+                window.location.href = "/";
+            }
+        });
+}
+
+function doPatch(){
     if(blogForm.TitleTextbox.value.length==0){
         nameError.style.display = "block";
         //nameInput.classList.add("error-border");
@@ -74,18 +102,52 @@
             },
             body: JSON.stringify(content)
         }).then((response) => {
-            console.log('PATCH Response.status: ', response.status);
-            window.location.href = "/";
+            if(response.status=="404"){
+                alert("Blog with that title already exists");
+            }
+            else{
+                alert("Blog updated");
+                window.location.href = "/";
+            }
         });
+}
+    /*async function validate(){
+        console.log("in validate")
+          let content = {
+            title: blogForm.TitleTextbox.value,
+        };
+        var response=await fetch("/validate",{
+            method:'GET',
+            headers:{
+                'Content-type': 'application/json; charset=UTF-8',
+                'Accept': 'application/json'
+            },
+            body: JSON.stringify(content)
+        });
+        if(response.body.okay){
+            console.log('New blog Created');
+            return true;
+        }
+        else{
+            alert("Title already used choose another.");
+            return false;
+        }
+    }*/
+     function validateInput(){
+        var titleText=document.querySelector("#TitleTextbox");
+        const regex=/^[a-zA-Z_0-9 ]+$/;
+        //console.log(titleText.value);
+        //console.log(titleText.value.match(regex));
+        if(!regex.test(titleText.value)){
+            titleText.value=titleText.value.slice(0,titleText.value.length-1);
+        }
     }
-    function validate(){
-        if($('#upload')[0].files.length === 0){
-        alert("You must set an image");
-        $('#upload').focus();
+    function fixInput(){
+        var theInput=document.querySelector("#TitleTextbox").value;
+        var theInput=theInput.trim();
+        document.querySelector("#TitleTextbox").value=theInput;
+    }
 
-        return false;
-    }
-    }
 </script>
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/js/bootstrap.bundle.min.js" integrity="sha384-FKyoEForCGlyvwx9Hj09JcYn3nv7wiPVlz7YYwJrWVcXK/BmnVDxM+D2scQbITxI" crossorigin="anonymous"></script>
 <%-include("partials/footer.ejs")%>

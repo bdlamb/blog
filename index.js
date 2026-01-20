@@ -49,8 +49,20 @@ app.get("/update",(req,res)=>{
     res.render("index.ejs",{ window:'update',title:title, text:blog.text, image:blog.image});
 });
 
-app.post("/upload",(req,res)=>{
-    if(req.files){
+/*app.get("/validate",(req,res)=>{
+   if(blogData.contains(req.body.title)){
+    res.send({okay:false});
+   }
+   else{
+    res.send({okay:true});
+   }
+});*/
+
+app.post("/",(req,res)=>{
+    if(req.body.title in blogData){
+        res.status(404).send(JSON.stringify({error:"Blog with that title already exists"}));
+    }
+    if(req.files.image){
         const uploadedFile=req.files.image;
         const uploadPath=__dirname +"/public/images/uploads/"+uploadedFile.name;
         uploadedFile.mv(uploadPath, function (err) {
@@ -60,20 +72,25 @@ app.post("/upload",(req,res)=>{
         }
         });
         blogData[`${req.body.title}`]={text:req.body.text,image:uploadedFile.name};
+        res.status(202).send("Blog Created");
     }
-    res.render("index.ejs",{blogData:blogData});
 });
 
-app.post("/",(req,res)=>{
+/*app.post("/",(req,res)=>{
     console.log("posting");
     res.render("index.ejs");
-});
+});*/
 
 app.patch("/",(req,res)=>{
     if(original != req.body.title){
         //blogData=blogData.filter(item=>!(item.title===original));
-        blogData[`${req.body.title}`]={text:req.body.text,image:blogData[`${original}`].image};
-        delete blogData[`${original}`];
+        if(req.body.title in blogData){
+             res.status(404).send(JSON.stringify({error:"Blog with that title already exists"}));
+        }
+        else{
+            blogData[`${req.body.title}`]={text:req.body.text,image:blogData[`${original}`].image};
+            delete blogData[`${original}`];
+        }
     }
     else{
         var blog=blogData[`${req.body.title}`];
@@ -82,7 +99,8 @@ app.patch("/",(req,res)=>{
          }
          
     }
-    res.render("index.ejs",{blogData:blogData});
+    res.status(202).send("Blog Created");
+    //res.render("index.ejs",{blogData:blogData});
 });
 
 app.delete("/",(req,res)=>{
