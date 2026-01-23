@@ -22,7 +22,7 @@
                 <%}%>
                 <div class="col-lg-6 pb-2 mx-auto"> 
                     <div class="d-grid gap-2 d-sm-flex justify-content-sm-center"> 
-                        <input class="btn btn-success" type="button" <%if(window==='create'){%>onclick="doCreate();"<%}else{%>onclick="doPatch();"<%}%> value="Submit" >
+                        <input class="btn btn-success" type="button" <%if(window==='create'){%>onclick="doCreate();"<%}else{%>onclick="doPatch(<%=id%>);"<%}%> value="Submit" >
                     </div> 
                 </div> 
             </form>
@@ -31,29 +31,29 @@
 <%}else{%>
 <div class="px-4 my-1 text-center border-bottom start-page"> 
     <div class="col-12 start-page-top"> 
-        <h1 class="display-4 fw-bold">Brians Blog About Stuff</h1> 
+        <h1 class="display-4 fw-bold">Brians Blog About Suff</h1> 
         <img class="blog-photo" src="images/start.png">
         <h2>Blogs</h2>
     </div> 
     <div class="blog-container" style="max-height: 30vh;">
             <%if(locals.blogData){%>
-                <%for(const [key,value] of Object.entries(blogData)){%>
+                <%blogData.forEach(element => {%>
                     <div class="container blogContainer"> 
                         <div class="row flex-lg-row-reverse align-items-right g-5"> 
                             <div class="col-10 col-sm-8 col-lg-6 align-content-center image-container">
-                                <% if(value.image){%>
-                                <img src="/image/<%=value.image%>" class="d-block img-fluid blog-list-image" alt="Bootstrap Themes" width="50%" height="300" loading="lazy">
+                                <% if(element.image){%>
+                                <img src="/image/<%=element.image%>" class="d-block img-fluid blog-list-image" alt="Bootstrap Themes" width="50%" height="300" loading="lazy">
                                 <%}else{%>
                                 <img src="images/vine.png" class="d-block img-fluid blog-list-image" alt="Bootstrap Themes" width="50%" height="300" loading="lazy">
                                 <%}%>
                             </div> 
                             <div class="col-lg-6 text-align-center align-content-center"> 
-                                <h2 class="fw-bold lh-1"><a href="/update?title=<%=key%>"><%=key%></a></h1> 
-                                <p class="lead"><%=value.text.slice(0,100)%></p> 
+                                <h2 class="fw-bold lh-1"><a href="/update?id=<%=element.id%>"><%=element.title%></a></h1> 
+                                <p class="lead"><%=element.content.slice(0,100)%></p> 
                             </div> 
                         </div> 
                     </div>
-                <%}%>
+                <%});%>
             <%}%>
     </div> 
 </div>
@@ -84,7 +84,7 @@ function doCreate(){
         });
 }
 
-function doPatch(){
+function doPatch(id){
     if(blogForm.TitleTextbox.value.length==0){
         nameError.style.display = "block";
         //nameInput.classList.add("error-border");
@@ -94,7 +94,7 @@ function doPatch(){
             title: blogForm.TitleTextbox.value,
             text: blogForm.BlogText.value
     };
-        fetch("/",{
+        fetch("/id",{
             method:'PATCH',
             headers:{
                 'Content-type': 'application/json; charset=UTF-8',

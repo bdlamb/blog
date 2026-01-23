@@ -12,16 +12,19 @@
     <header>
         <% if(locals.window){%>
             <button  type="button" class="btn btn-primary" onclick="window.location.href='/'"><</button>
-            <%if(locals.title){%>
-                <button type="button" class="btn btn-danger" onclick="doDelete();">delete</button>
+           <%if(locals.title){%>
+                <button type="button" class="btn btn-danger" <%if(locals.window){%>onclick="doDelete(<%=id%>);"<%}%>>delete</button>
             <%}%>
         <%}else{%>
             <button type="button" class="btn btn-primary" onclick="window.location.href='/create'">new</button>
         <%}%>
     </header>
-    <script>function doDelete(){
+    <script>
+    
+    function doDelete(blogid){
         let content = {
             title: blogForm.TitleTextbox.value,
+            id:blogid
         };
         if(confirm(`Are you sure you want to delete blog titled: ${content.title}`)){
             fetch("/",{

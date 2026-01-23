@@ -1,18 +1,22 @@
 import express from 'express';
 import fileUpload from 'express-fileupload';
+import pg from 'pg';
 import path from 'path';
+import os from 'os';
+import fs from 'fs';
 
 
 const app=express();
 const port=3000;
-var blogData={};
+const uploadFolder="C:\\Users\\bdlam\\OneDrive\\Documents\\myblog"
+const blogHost="localhost";
+const user ="postgres";
+const password="pass";
 
-/*{"my day" : {text: "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Ut quis lobortis ex. Integer leo risus, faucibus id mi in, posuere ultricies felis. Duis tristique pretium quam et consequat. Nullam sed leo vel nunc vehicula pharetra. Integer auctor purus sit amet dapibus porta. Integer non turpis sed lectus porttitor laoreet sagittis.", image:"birthday-invite.png"},
-    "my da" : {text: "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Ut quis lobortis ex. Integer leo risus, faucibus id mi in, posuere ultricies felis. Duis tristique pretium quam et consequat. Nullam sed leo vel nunc vehicula pharetra. Integer auctor purus sit amet dapibus porta. Integer non turpis sed lectus porttitor laoreet sagittis.", image:"birthday-invite.png"},
-    "my d" : {text: "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Ut quis lobortis ex. Integer leo risus, faucibus id mi in, posuere ultricies felis. Duis tristique pretium quam et consequat. Nullam sed leo vel nunc vehicula pharetra. Integer auctor purus sit amet dapibus porta. Integer non turpis sed lectus porttitor laoreet sagittis.", image:"birthday-invite.png"}
-};*/
-const __dirname = import.meta.dirname;
-
+var blogData={"my day" : {text: "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Ut quis lobortis ex. Integer leo risus, faucibus id mi in, posuere ultricies felis. Duis tristique pretium quam et consequat. Nullam sed leo vel nunc vehicula pharetra. Integer auctor purus sit amet dapibus porta. Integer non turpis sed lectus porttitor laoreet sagittis.", image:"path.png"},
+    "my da" : {text: "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Ut quis lobortis ex. Integer leo risus, faucibus id mi in, posuere ultricies felis. Duis tristique pretium quam et consequat. Nullam sed leo vel nunc vehicula pharetra. Integer auctor purus sit amet dapibus porta. Integer non turpis sed lectus porttitor laoreet sagittis.", image:"path.png"},
+    "my d" : {text: "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Ut quis lobortis ex. Integer leo risus, faucibus id mi in, posuere ultricies felis. Duis tristique pretium quam et consequat. Nullam sed leo vel nunc vehicula pharetra. Integer auctor purus sit amet dapibus porta. Integer non turpis sed lectus porttitor laoreet sagittis.", image:"path.png"}
+};
 
 app.use(fileUpload({
   limits: { fileSize: 50 * 1024 * 1024 },
@@ -21,19 +25,35 @@ app.use(express.json({ limit: '1mb', type: 'application/json' }));
 app.use(express.urlencoded({extended:true}));
 app.use(express.static("public"));
 
+const db=new pg.Client({
+    host: blogHost,
+    port:5432,
+    database:"myblog",
+    user:user,
+    password:password
+});
+await db.connect();
 
 var original="";
 
-app.get("/",(req,res)=>{
+app.get("/",async (req,rest)=>{
     original="";
-    //console.log(blogData);
-    if(blogData.length<1){
-        console.log("in nothing");
-        res.render("index.ejs");
-    } else{
-        console.log("in stuff");
-        res.render("index.ejs",{blogData:blogData});
-    }
+    db.query("select * from blogs",(err,res)=>{
+        if(err){
+            console.log(err);
+        }else{
+            blogData=res.rows;
+            console.log(blogData);
+            if(blogData.length<1){
+                console.log("in nothing");
+                rest.render("index.ejs");
+            } else{
+                console.log("in stuff");
+                rest.render("index.ejs",{blogData:blogData});
+            }
+        }
+        //db.end();
+    });
 });
 
 app.get("/create",(req,res)=>{
@@ -41,12 +61,15 @@ app.get("/create",(req,res)=>{
     res.render("index.ejs",{window:'create'});
 });
 
-app.get("/update",(req,res)=>{
-    const title=req.query.title;
-    original=title;
-    const blog=blogData[title];
+app.get("/update",async(req,res)=>{
+    console.log(req.params.blogid);
+    var theBlog=((await db.query(`select * from blogs where id=${req.query.id}`)).rows)[0];
+    console.log(theBlog);
+    //const title=req.query.title;
+    //original=title;
+    //const blog=blogData[title];
     //console.log(blogData)
-    res.render("index.ejs",{ window:'update',title:title, text:blog.text, image:blog.image});
+    res.render("index.ejs",{ window:'update',title:theBlog.title, text:theBlog.content, image:theBlog.image, id:theBlog.id});
 });
 
 /*app.get("/validate",(req,res)=>{
@@ -58,21 +81,32 @@ app.get("/update",(req,res)=>{
    }
 });*/
 
-app.post("/",(req,res)=>{
+app.post("/",async(req,rest)=>{
+    var okay
     if(req.body.title in blogData){
-        res.status(404).send(JSON.stringify({error:"Blog with that title already exists"}));
+        rest.status(404).send(JSON.stringify({error:"Blog with that title already exists"}));
     }
     if(req.files.image){
         const uploadedFile=req.files.image;
-        const uploadPath=__dirname +"/public/images/uploads/"+uploadedFile.name;
+        const uploadPath=uploadFolder+"\\"+uploadedFile.name;
         uploadedFile.mv(uploadPath, function (err) {
         if (err) {
             console.log(err);
-            res.send("Failed !!");
+            rest.send("Failed !!");
         }
         });
-        blogData[`${req.body.title}`]={text:req.body.text,image:uploadedFile.name};
-        res.status(202).send("Blog Created");
+        //await db.connect();
+        db.query(`insert into blogs(title,content,image) values('${req.body.title}','${req.body.text}','${uploadedFile.name}')`,(err,res)=>{
+            if(err){
+                console.log(err);
+            }else{
+                console.log("blog created");
+            }
+            //db.end();
+            rest.status(202).send("Blog Created");
+        });
+        //blogData.push({req.body.title})
+        //blogData[`${req.body.title}`]={text:req.body.text,image:uploadedFile.name};
     }
 });
 
@@ -81,8 +115,16 @@ app.post("/",(req,res)=>{
     res.render("index.ejs");
 });*/
 
-app.patch("/",(req,res)=>{
-    if(original != req.body.title){
+app.patch("/:id",async (req,res)=>{
+    var selectedBlog=((await db.query(`select * from blogs where id=${req.params.id}`)).rows)[0];
+    if(req.body.title!=selectedBlog.title){
+        var otherBlog=await db.query(`select * from blogs where title='${req.body.title}'`);
+        if(otherBlog.rowCount!=0){
+            res.status(404).send(JSON.stringify({error:"Blog with that title already exists"}));
+        }
+    }
+    await db.query(`update blogs set title='${req.body.title}',content='${req.body.text}',image='${selectedBlog.image}' where id=${req.params.id}`);
+    /*if(original != req.body.title){
         //blogData=blogData.filter(item=>!(item.title===original));
         if(req.body.title in blogData){
              res.status(404).send(JSON.stringify({error:"Blog with that title already exists"}));
@@ -98,23 +140,25 @@ app.patch("/",(req,res)=>{
             blog.text=req.body.text;
          }
          
-    }
+    }*/
     res.status(202).send("Blog Created");
     //res.render("index.ejs",{blogData:blogData});
 });
 
 app.delete("/",(req,res)=>{
-    delete blogData[`${req.body.title}`];
-    res.render("index.ejs",{blogData:blogData});
+    db.query(`delete from blogs where id=${req.body.id}`);
+    res.sendStatus(200);
+    //delete blogData[`${req.body.title}`];
+    //res.render("index.ejs",{blogData:blogData});
 });
 
 app.get("/image/:name",(req,res)=>{
     try{
         //console.log("getting image");
         //console.log(path.join(__dirname, `/public/images/uploads/${req.params.name}`));
-        res.sendFile(path.join(__dirname, `/public/images/uploads/${req.params.name}`));
+        res.sendFile(path.join(uploadFolder, `\\${req.params.name}`));
     }catch(error){
-        res.sendFile(path.join(__dirname, `/public/images/uploads/birthday-invite.png`));
+        res.sendFile(path.join(uploadFolder, `\\path.png`));
     }
 });
 
