@@ -83,6 +83,9 @@
     background-image: url("../images/leaf.gif");
     background-size: contain;
     background-repeat: round;
+    background-color: white;
+    margin-left: 2rem;
+    margin-right: 2rem;
 }
 
 .caption_email{
@@ -127,4 +130,15 @@
 
 select{
     width: 50%;
+}
+
+header{
+    border-bottom: 5pt solid green;
+    padding-bottom: 2pt;
+    margin-top: 1rem;
+    margin-right: 1rem;
+}
+
+body{
+    background-color: green;
 }
