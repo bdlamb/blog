@@ -34,6 +34,8 @@ const db=new pg.Client({
 });
 await db.connect();
 
+await db.query("create table if not exists blogs(id serial primary key,tile varchar(100),content text,image varchar(100))");
+
 var original="";
 
 app.get("/",async (req,rest)=>{
