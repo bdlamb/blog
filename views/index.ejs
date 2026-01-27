@@ -39,17 +39,17 @@
             <%if(locals.blogData){%>
                 <%blogData.forEach(element => {%>
                     <div class="container blogContainer"> 
-                        <div class="row flex-lg-row-reverse align-items-right g-5"> 
-                            <div class="col-10 col-sm-8 col-lg-6 align-content-center image-container">
+                        <div class="row flex-row-reverse align-items-right g-5 blog-inner"> 
+                            <div class="d-flex col-6 align-content-center image-container">
                                 <% if(element.image){%>
-                                <img src="/image/<%=element.image%>" class="d-block img-fluid blog-list-image" alt="Bootstrap Themes" width="50%" height="300" loading="lazy">
+                                <img src="/image/<%=element.image%>" class="d-block img-fluid blog-list-image" alt="Bootstrap Themes" loading="lazy">
                                 <%}else{%>
                                 <img src="images/vine.png" class="d-block img-fluid blog-list-image" alt="Bootstrap Themes" width="50%" height="300" loading="lazy">
                                 <%}%>
                             </div> 
-                            <div class="col-lg-6 text-align-center align-content-center"> 
-                                <h2 class="fw-bold lh-1"><a href="/update?id=<%=element.id%>"><%=element.title%></a></h1> 
-                                <p class="lead"><%=element.content.slice(0,100)%></p> 
+                            <div class="col-6 text-align-center align-content-center" style="padding: 0;"> 
+                                <h2 class="fw-bold lh-1 blog-heading"><a href="/update?id=<%=element.id%>"><%=element.title%></a></h1> 
+                                <p class=""><%=element.content.slice(0,100)%></p> 
                             </div> 
                         </div> 
                     </div>

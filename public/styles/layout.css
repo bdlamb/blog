@@ -5,15 +5,10 @@ header{
 
 .blogContainer{
     background-color:antiquewhite;
-    padding: 0;
     margin:0;
     max-width: 50%;
     min-width: 50%;
-    max-height: 20rem;
-    min-height: 20rem;
     align-content: center;
-
-    p{
-        font-size: 16pt;
-    }
+    padding-top: 5pt;
 }
+
