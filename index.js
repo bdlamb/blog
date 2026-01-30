@@ -13,10 +13,11 @@ const blogHost="localhost";
 const user ="postgres";
 const password="pass";
 
-var blogData={"my day" : {text: "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Ut quis lobortis ex. Integer leo risus, faucibus id mi in, posuere ultricies felis. Duis tristique pretium quam et consequat. Nullam sed leo vel nunc vehicula pharetra. Integer auctor purus sit amet dapibus porta. Integer non turpis sed lectus porttitor laoreet sagittis.", image:"path.png"},
+var blogData={}
+/*{"my day" : {text: "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Ut quis lobortis ex. Integer leo risus, faucibus id mi in, posuere ultricies felis. Duis tristique pretium quam et consequat. Nullam sed leo vel nunc vehicula pharetra. Integer auctor purus sit amet dapibus porta. Integer non turpis sed lectus porttitor laoreet sagittis.", image:"path.png"},
     "my da" : {text: "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Ut quis lobortis ex. Integer leo risus, faucibus id mi in, posuere ultricies felis. Duis tristique pretium quam et consequat. Nullam sed leo vel nunc vehicula pharetra. Integer auctor purus sit amet dapibus porta. Integer non turpis sed lectus porttitor laoreet sagittis.", image:"path.png"},
     "my d" : {text: "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Ut quis lobortis ex. Integer leo risus, faucibus id mi in, posuere ultricies felis. Duis tristique pretium quam et consequat. Nullam sed leo vel nunc vehicula pharetra. Integer auctor purus sit amet dapibus porta. Integer non turpis sed lectus porttitor laoreet sagittis.", image:"path.png"}
-};
+};*/
 
 app.use(fileUpload({
   limits: { fileSize: 50 * 1024 * 1024 },
@@ -45,7 +46,8 @@ app.get("/",async (req,rest)=>{
             console.log(err);
         }else{
             blogData=res.rows;
-            console.log(blogData);
+            blogData.forEach(row=>{ var extra="";if(row.content.length>100){extra="..."};row.content= row.content.slice(0,100)+extra; });
+            //console.log(blogData);
             if(blogData.length<1){
                 console.log("in nothing");
                 rest.render("index.ejs");
@@ -56,6 +58,22 @@ app.get("/",async (req,rest)=>{
         }
         //db.end();
     });
+});
+
+app.get("/:id",async (req,res) => {
+    try{
+    let results=await db.query(`select * FROM blogs where id=${req.params.id}`);
+    //console.log(results);
+    if(results.rowCount>0){
+        console.log("sending");
+        res.json({id:results.rows[0].id,title:results.rows[0].title,content:results.rows[0].content});
+    }
+    else{
+        res.sendStatus(404);
+    }
+    }catch(error){
+        console.log(error);
+    }
 });
 
 app.get("/create",(req,res)=>{
@@ -85,6 +103,9 @@ app.get("/update",async(req,res)=>{
 
 app.post("/",async(req,rest)=>{
     var okay
+    console.log("rrrr");
+    console.log(req.body);
+    console.log(req.files);
     if(req.body.title in blogData){
         rest.status(404).send(JSON.stringify({error:"Blog with that title already exists"}));
     }
@@ -118,7 +139,10 @@ app.post("/",async(req,rest)=>{
 });*/
 
 app.patch("/:id",async (req,res)=>{
+    console.log("lllll");
     var selectedBlog=((await db.query(`select * from blogs where id=${req.params.id}`)).rows)[0];
+    console.log(req.body.title);
+    console.log(selectedBlog.title);
     if(req.body.title!=selectedBlog.title){
         var otherBlog=await db.query(`select * from blogs where title='${req.body.title}'`);
         if(otherBlog.rowCount!=0){

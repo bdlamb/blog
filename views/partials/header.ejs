@@ -16,7 +16,7 @@
                 <button type="button" class="btn btn-danger" <%if(locals.window){%>onclick="doDelete(<%=id%>);"<%}%>>delete</button>
             <%}%>
         <%}else{%>
-            <button type="button" class="btn btn-primary" onclick="window.location.href='/create'">new</button>
+            <button type="button" class="btn btn-primary" onclick="showCreate()">new</button>
         <%}%>
     </header>
 </body>

@@ -172,6 +172,108 @@ p{
     }
 }
 
+#blogExpandedContainer{
+    position:absolute;
+    x: 0;
+    y:0;
+    z-index: 3;
+    width: 100%;
+    height: 100%;
+    background-color: transparent;
+    justify-content: center;
+    display: flex;
+    display: none;
+}
+
+#blogExpandedBack{
+    width: 100%;
+    height: 100%;
+    background-color: white;
+    opacity: 0.5;
+}
+
+#expandedImage{
+    max-width: 100%;
+    max-height: 100%;
+    width: 100%;
+    height: 100%;
+}
+
+#blogExpandedFrame{
+    width: 80%;
+    height: 80%;
+    background-color: white;
+    opacity: 1;
+    align-self: center;
+    z-index: 4;
+    position:fixed;
+    overflow-y: scroll;
+}
+
+#blogInformationTitle{
+    color: black;
+    font-size: 5rem;
+    margin: 5rem;
+    border-bottom: 2pt solid green;
+}
+
+#editButton{
+    border-radius: 15%;
+    border-color: antiquewhite;
+    color: green;
+
+}
+
+.clicked{
+        border:none;
+}
+
+#deleteButton{
+    border-radius: 15%;
+    border-color: antiquewhite;
+    color:red;
+}
+
+#buttonPanel{
+    justify-self: end;
+}
+
+.title-input{
+    width: 50%;
+    font-size: 5rem;
+    margin: 3rem;
+}
+
+.content-input{
+    width: 50%;
+    min-height: 20rem;
+    max-height: 20rem;
+}
+
+input[type=file]{
+    margin-bottom: 2rem;
+}
+
+#textPanel{
+    max-height: 25rem;
+    overflow-y: scroll;
+}
+
+#editForm{
+    display: none;
+}
+
+#closeButton{
+    border-radius: 15%;
+    border-color: antiquewhite;
+}
+
+#createForm{
+    display: none;
+}
+
+
+
 /*@media screen and (max-width:757px) {
 
     #normalFooter{
@@ -219,4 +321,3 @@ p{
     label{
         font-size: 16pt;
     }*/
-}
