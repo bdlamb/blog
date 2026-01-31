@@ -202,12 +202,13 @@ p{
 #blogExpandedFrame{
     width: 80%;
     height: 80%;
-    background-color: white;
     opacity: 1;
     align-self: center;
     z-index: 4;
     position:fixed;
     overflow-y: scroll;
+    border-radius: 5%;
+    background-color: aliceblue;
 }
 
 #blogInformationTitle{
@@ -215,6 +216,23 @@ p{
     font-size: 5rem;
     margin: 5rem;
     border-bottom: 2pt solid green;
+}
+
+#blogInformationContainer{
+    margin:1rem;
+}
+
+#blogInformationJustText > h1{
+    color: green;
+    border-bottom: 2pt solid green;
+}
+
+p{
+    color: #5b9e24;
+}
+
+#blogInformationText{
+    margin:5rem;
 }
 
 #editButton{
@@ -266,13 +284,16 @@ input[type=file]{
 #closeButton{
     border-radius: 15%;
     border-color: antiquewhite;
+    margin: 1rem;
 }
 
 #createForm{
     display: none;
 }
 
-
+hr{
+    color:green;
+}
 
 /*@media screen and (max-width:757px) {
 

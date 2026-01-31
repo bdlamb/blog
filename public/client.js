@@ -3,23 +3,39 @@ var selected="";
 function doCreate(){
     if(createForm.createTitleInput.value&&createImageInput.files[0]){
         console.log("creating");
-        const formData=new FormData();
-        formData.append('title',createForm.createTitleInput.value);
-        formData.append('text',createForm.createContentInput.value);
-        formData.append('image',createImageInput.files[0]);
-        //var file=blogForm.imageInput.files[0];
-        fetch("/",{
-            method:'POST',
-                body: formData,
-            }).then((response) => {
-                if(response.status=="404"){
-                    alert("Blog with that title already exists");
-                }
-                else{
-                    alert("blog created");
-                    window.location.href = "/";
-                }
-            });
+        var title=createForm.createTitleInput.value;
+        var imageFile=createImageInput.files[0];
+        title=title.trim();
+        if(title && isValid()){
+            if(isValidMimeType(imageFile)){
+                const formData=new FormData();
+                formData.append('title',createForm.createTitleInput.value);
+                formData.append('text',createForm.createContentInput.value);
+                formData.append('image',createForm.createImageInput.files[0]);
+                //var file=blogForm.imageInput.files[0];
+                fetch("/",{
+                    method:'POST',
+                        body: formData,
+                    }).then((response) => {
+                        if(response.status=="404"){
+                            alert("Blog with that title already exists");
+                        }
+                        else{
+                            alert("blog created");
+                            window.location.href = "/";
+                        }
+                    });
+            }
+            else{
+                alert("Invalid image");
+                return;
+            }
+
+        }
+        else{
+            alert("The tile must contain at least one character and must only indicated values.")
+            return;
+        }
     }
     else{
         alert("title and image must be filled out");
@@ -28,9 +44,13 @@ function doCreate(){
 }
 
 function doPatch(id){
-    if(editForm.editTitleInput.value.length==0){
-        alert("title must not be empty");
+    if(!editForm.editTitleInput.value || ededitForm.editTitleInput.value.trim()==0 || !isValid()){
+        alert("Issue with title");
         //nameInput.classList.add("error-border");
+        return;
+    }
+    if(!editForm.editImageInput.value || !isValidMimeType(editForm.editImageInput.files[0]) ){
+        alert("Issue with image");
         return;
     }
     let content = {
@@ -77,6 +97,21 @@ function doPatch(id){
             return false;
         }
     }*/
+
+    function isValidMimeType(file) {
+        const allowedMimeTypes = ['image/jpeg', 'image/png', 'image/gif', 'image/webp', 'image/avif'];
+        return allowedMimeTypes.includes(file.type);
+    }
+
+    function isValid(){
+        const regex=/^[a-zA-Z_0-9 ]+$/;
+        if(!regex.test(titleText.value)){
+            return false;
+        }
+        else{
+            return true;
+        }
+    }
      function validateInput(){
         var titleText=document.querySelector("#TitleTextbox");
         const regex=/^[a-zA-Z_0-9 ]+$/;
@@ -129,8 +164,9 @@ function doPatch(id){
                 selected=res.id;
                 document.querySelector("#editButton").style.visibility="visible";
                 document.querySelector("#deleteButton").style.visibility="visible";
-                document.querySelector("#blogInformationTitle").style.display="contents";
-                document.querySelector("#textPanel").style.display="contents";
+                document.querySelector("#blogInformationJustText").style.display="block";
+                //document.querySelector("#blogInformationTitle").style.display="contents";
+                //document.querySelector("#textPanel").style.display="contents";
                 document.querySelector("#editForm").style.display="none";
                 document.querySelector("#createForm").style.display="none";
                 document.querySelector("#blogExpandedContainer").style.display="flex";
@@ -148,8 +184,9 @@ function doPatch(id){
     function showCreate(){
         document.querySelector("#editButton").style.visibility="hidden";
         document.querySelector("#deleteButton").style.visibility="hidden";
-        document.querySelector("#blogInformationTitle").style.display="none";
-        document.querySelector("#textPanel").style.display="none";
+        document.querySelector("#blogInformationJustText").style.display="none";
+        //document.querySelector("#blogInformationTitle").style.display="none";
+        //document.querySelector("#textPanel").style.display="none";
         document.querySelector("#editForm").style.display="none";
         document.querySelector("#createForm").style.display="contents";
         document.querySelector("#blogExpandedContainer").style.display="flex";
@@ -157,13 +194,15 @@ function doPatch(id){
 
     function editBlog(){
         document.querySelector("#editButton").classList.toggle("clicked");
-        if(document.querySelector("#blogInformationTitle").style.display!="none"){
-            document.querySelector("#blogInformationTitle").style.display="none";
-            document.querySelector("#blogInformationText").style.display="none";
+        if(document.querySelector("#blogInformationJustText").style.display!="none"){
+            document.querySelector("#blogInformationJustText").style.display="none";
+            //document.querySelector("#blogInformationTitle").style.display="none";
+            //document.querySelector("#blogInformationText").style.display="none";
             document.querySelector("#editForm").style.display="contents";
         }else{
-            document.querySelector("#blogInformationTitle").style.display="block";
-            document.querySelector("#blogInformationText").style.display="block";
+            document.querySelector("#blogInformationJustText").style.display="block";
+            //document.querySelector("#blogInformationTitle").style.display="block";
+            //document.querySelector("#blogInformationText").style.display="block";
             document.querySelector("#editForm").style.display="none";
         }
         

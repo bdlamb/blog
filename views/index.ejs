@@ -3,7 +3,7 @@
     <div id="blogExpandedBack"></div>
     <div id="blogExpandedFrame">
         <div class="my-1 pb-4 text-center">
-        <div style="background-color: rgb(255, 255, 255 ,0.5);">
+        <div>
             <div id="buttonPanel">
                 <button id="closeButton" onclick="hideMe()">
                     <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-x-lg" viewBox="0 0 16 16">
@@ -23,10 +23,13 @@
                     </svg>
                 </button>
             <div id="blogInformationContainer">
-                <h1 id="blogInformationTitle">Title</h1>
-                <div id="textPanel">
-                     <p id="blogInformationText">Text</p>
-                </div>      
+                <div id="blogInformationJustText">
+                    <hr id=>
+                    <h1 id="blogInformationTitle">Title</h1>
+                    <div id="textPanel">
+                        <p id="blogInformationText">Text</p>
+                    </div>
+                </div>
                 <form id="editForm">
                     <div id="editFormText">
                         <input type="text" name="title" class="title-input" id="editTitleInput">
