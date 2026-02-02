@@ -1,4 +1,23 @@
 var selected="";
+const toast = document.getElementById('liveToast');
+const errorToast=document.getElementById('errorToast');
+//const toastBootstrap = bootstrap.Toast.getOrCreateInstance(toast);
+
+function displayToast(message){
+    var toastBootstrap = bootstrap.Toast.getOrCreateInstance(toast);
+    document.querySelector("#liveToast > .toast-body").innerHTML=message;
+    //const toastMessage= document.querySelector(".toast-body");
+    //toastMessage.innerHTML=message;
+    toastBootstrap.show();
+}
+
+function displayErrorToast(message){
+    var toastBootstrap = bootstrap.Toast.getOrCreateInstance(errorToast);
+    document.querySelector("#errorToast > .toast-body").innerHTML=message;
+    //const toastMessage= document.querySelector(".toast-body");
+    //toastMessage.innerHTML=message;
+    toastBootstrap.show();
+}
 
 function doCreate(){
     if(createForm.createTitleInput.value&&createImageInput.files[0]){
@@ -6,7 +25,7 @@ function doCreate(){
         var title=createForm.createTitleInput.value;
         var imageFile=createImageInput.files[0];
         title=title.trim();
-        if(title && isValid()){
+        if(title && isValid(title)){
             if(isValidMimeType(imageFile)){
                 const formData=new FormData();
                 formData.append('title',createForm.createTitleInput.value);
@@ -17,40 +36,37 @@ function doCreate(){
                     method:'POST',
                         body: formData,
                     }).then((response) => {
-                        if(response.status=="404"){
-                            alert("Blog with that title already exists");
+                        if(!response.ok){
+                            displayErrorToast("Issue creating blog.It is possible another blog with that same name already exists.");
                         }
                         else{
-                            alert("blog created");
+                            displayToast("Blog created");
                             window.location.href = "/";
                         }
                     });
             }
             else{
-                alert("Invalid image");
+                displayErrorToast("Given image is not valid.");
                 return;
             }
 
         }
         else{
-            alert("The tile must contain at least one character and must only indicated values.")
+            displayErrorToast("The tile must contain at least one character and must only indicated values.");
             return;
         }
     }
     else{
-        alert("title and image must be filled out");
+        displayErrorToast("Title and image inputs must be filled out.");
         return;
     }
 }
 
 function doPatch(id){
-    if(!editForm.editTitleInput.value || ededitForm.editTitleInput.value.trim()==0 || !isValid()){
-        alert("Issue with title");
+    console.log(id);
+    if(!editForm.editTitleInput.value || editForm.editTitleInput.value.trim()==0 || !isValid(editForm.editTitleInput.value)){
+        displayErrorToast("Issue with title.");
         //nameInput.classList.add("error-border");
-        return;
-    }
-    if(!editForm.editImageInput.value || !isValidMimeType(editForm.editImageInput.files[0]) ){
-        alert("Issue with image");
         return;
     }
     let content = {
@@ -66,11 +82,11 @@ function doPatch(id){
             },
             body: JSON.stringify(content)
         }).then((response) => {
-            if(response.status=="404"){
-                alert("Blog with that title already exists");
+            if(!response.ok){
+                displayErrorToast("Issue patching blog.It is possible another blog with that same name already exists.");
             }
             else{
-                alert("Blog updated");
+                displayToast("Blog created.");
                 window.location.href = "/";
             }
         });
@@ -103,9 +119,9 @@ function doPatch(id){
         return allowedMimeTypes.includes(file.type);
     }
 
-    function isValid(){
+    function isValid(stringToTest){
         const regex=/^[a-zA-Z_0-9 ]+$/;
-        if(!regex.test(titleText.value)){
+        if(!regex.test(stringToTest)){
             return false;
         }
         else{
@@ -141,8 +157,12 @@ function doPatch(id){
             },
                 body: JSON.stringify(content)
             }).then((response) => {
-                alert("Blog removed");
-                window.location.href = "/";
+                if(response.ok){
+                    alert("Blog removed");
+                    window.location.href = "/";
+                }else{
+                    displayErrorToast("Issue deleting blog.");
+                }
             });
         }
     }
@@ -162,6 +182,7 @@ function doPatch(id){
         }).then((response) => {
             response.json().then(res =>{
                 selected=res.id;
+                displayToast("Blog loaded");
                 document.querySelector("#editButton").style.visibility="visible";
                 document.querySelector("#deleteButton").style.visibility="visible";
                 document.querySelector("#blogInformationJustText").style.display="block";

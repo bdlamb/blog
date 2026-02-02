@@ -39,33 +39,30 @@ await db.query("create table if not exists blogs(id serial primary key,tile varc
 
 var original="";
 
-app.get("/",async (req,rest)=>{
+app.get("/",async (req,res)=>{
     original="";
-    db.query("select * from blogs",(err,res)=>{
-        if(err){
-            console.log(err);
-        }else{
-            blogData=res.rows;
-            blogData.forEach(row=>{ var extra="";if(row.content.length>100){extra="..."};row.content= row.content.slice(0,100)+extra; });
-            //console.log(blogData);
-            if(blogData.length<1){
-                console.log("in nothing");
-                rest.render("index.ejs");
-            } else{
-                console.log("in stuff");
-                rest.render("index.ejs",{blogData:blogData});
-            }
-        }
-        //db.end();
-    });
+    try{
+        let results=await db.query("select * from blogs");
+        blogData=results.rows;
+        blogData.forEach(row=>{ var extra="";if(row.content.length>100){extra="..."};row.content= row.content.slice(0,100)+extra; });
+        if(blogData.length<1){
+            console.log("in nothing");
+            res.render("index.ejs");
+        } else{
+            console.log("in stuff");
+            res.render("index.ejs",{blogData:blogData});
+         }
+    }catch(err){
+        console.log(err);
+        res.sendStatus(400);
+    }
 });
 
 app.get("/:id",async (req,res) => {
     try{
-    let results=await db.query(`select * FROM blogs where id=${req.params.id}`);
+    let results=await db.query("select * FROM blogs where id=$1",[req.params.id]);
     //console.log(results);
     if(results.rowCount>0){
-        console.log("sending");
         res.json({id:results.rows[0].id,title:results.rows[0].title,content:results.rows[0].content});
     }
     else{
@@ -81,7 +78,7 @@ app.get("/create",(req,res)=>{
     res.render("index.ejs",{window:'create'});
 });
 
-app.get("/update",async(req,res)=>{
+/*app.get("/update",async(req,res)=>{
     console.log(req.params.blogid);
     var theBlog=((await db.query(`select * from blogs where id=${req.query.id}`)).rows)[0];
     console.log(theBlog);
@@ -90,7 +87,7 @@ app.get("/update",async(req,res)=>{
     //const blog=blogData[title];
     //console.log(blogData)
     res.render("index.ejs",{ window:'update',title:theBlog.title, text:theBlog.content, image:theBlog.image, id:theBlog.id});
-});
+});*/
 
 /*app.get("/validate",(req,res)=>{
    if(blogData.contains(req.body.title)){
@@ -102,11 +99,9 @@ app.get("/update",async(req,res)=>{
 });*/
 
 app.post("/",async(req,rest)=>{
-    var okay
-    console.log("rrrr");
-    console.log(req.body);
-    console.log(req.files);
-    if(req.body.title in blogData){
+    console.log("pppp");
+    const results=await db.query("select * from blogs where title=$1",[req.body.title]);
+    if(results.rowCount>0){
         rest.status(404).send(JSON.stringify({error:"Blog with that title already exists"}));
     }
     if(req.files.image){
@@ -118,8 +113,7 @@ app.post("/",async(req,rest)=>{
             rest.send("Failed !!");
         }
         });
-        //await db.connect();
-        db.query(`insert into blogs(title,content,image) values('${req.body.title}','${req.body.text}','${uploadedFile.name}')`,(err,res)=>{
+        db.query(`insert into blogs(title,content,image) values($1,$2,$3)`,[req.body.title,req.body.text,uploadedFile.name],(err,res)=>{
             if(err){
                 console.log(err);
             }else{
@@ -128,8 +122,6 @@ app.post("/",async(req,rest)=>{
             //db.end();
             rest.status(202).send("Blog Created");
         });
-        //blogData.push({req.body.title})
-        //blogData[`${req.body.title}`]={text:req.body.text,image:uploadedFile.name};
     }
 });
 
@@ -140,16 +132,14 @@ app.post("/",async(req,rest)=>{
 
 app.patch("/:id",async (req,res)=>{
     console.log("lllll");
-    var selectedBlog=((await db.query(`select * from blogs where id=${req.params.id}`)).rows)[0];
-    console.log(req.body.title);
-    console.log(selectedBlog.title);
+    var selectedBlog=((await db.query(`select * from blogs where id=$1`,[req.params.id])).rows)[0];
     if(req.body.title!=selectedBlog.title){
-        var otherBlog=await db.query(`select * from blogs where title='${req.body.title}'`);
+        var otherBlog=await db.query(`select * from blogs where title=$1`,[req.body.title]);
         if(otherBlog.rowCount!=0){
             res.status(404).send(JSON.stringify({error:"Blog with that title already exists"}));
         }
     }
-    await db.query(`update blogs set title='${req.body.title}',content='${req.body.text}',image='${selectedBlog.image}' where id=${req.params.id}`);
+    await db.query(`update blogs set title=$1, content=$2, image=$3 where id=$4`,[req.body.title,req.body.text,selectedBlog.image,req.params.id]);
     /*if(original != req.body.title){
         //blogData=blogData.filter(item=>!(item.title===original));
         if(req.body.title in blogData){
@@ -172,7 +162,7 @@ app.patch("/:id",async (req,res)=>{
 });
 
 app.delete("/",(req,res)=>{
-    db.query(`delete from blogs where id=${req.body.id}`);
+    db.query(`delete from blogs where id=$1`,[req.body.id]);
     res.sendStatus(200);
     //delete blogData[`${req.body.title}`];
     //res.render("index.ejs",{blogData:blogData});
