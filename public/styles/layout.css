@@ -6,9 +6,10 @@ header{
 .blogContainer{
     background-color:antiquewhite;
     margin:0;
-    max-width: 50%;
-    min-width: 50%;
     align-content: center;
     padding-top: 5pt;
+    border-radius: 10pt;
+    border: 3pt solid lightblue;
+    margin-bottom: 2pt;
 }
 

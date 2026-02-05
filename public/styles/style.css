@@ -5,7 +5,7 @@
 
 .blog-container{
     min-width: 100%;
-    min-height: 20vh;
+    min-height: 200pt;
     border:  2pt solid green;
     display: inline-flex;
     padding: 0;
@@ -13,6 +13,7 @@
     overflow-x: hidden;
     overflow-y: auto;
     flex-wrap: wrap;
+    height: 40vh;
 }
 
 #smallFooter{
@@ -21,8 +22,7 @@
 
 .start-page{
     justify-items: center;
-    max-height: 80%;
-    height: 80%;
+    height: 80vh;
 }
 
 .blog-list-image{
@@ -42,7 +42,7 @@
     background-size: cover;
     max-height: 40vh;
     height: 40vh;
-    min-height: 324px;
+    min-height: 320px;
 }
 
 .create-container{
@@ -87,20 +87,22 @@
  }
 
 
- footer{
+ .myfooter{
     background-image: url("../images/leaf.gif");
     background-size: contain;
     background-repeat: round;
-    background-color: white;
+    background-color: antiquewhite;
     margin-left: 2rem;
     margin-right: 2rem;
+    width: -webkit-fill-available;
+    border-radius: 10px;
 }
 
 .caption_email{
-    font-size: 3vw;
+    font-size: 2vw;
     font-family: Italianno;
     color:#5b9e24;
-    text-wrap: none;
+    min-width: fit-content;
     margin-left: 1em;
 }
 
@@ -149,7 +151,7 @@ header{
 
 body{
     background-color: green;
-    min-height: 600px;
+    min-height: 740px;
     min-width: 300px;
 }
 
@@ -163,6 +165,8 @@ p{
 
 #normalFooter{
     display: contents;
+    min-width: 100%;
+    justify-content: space-between;
 }
 
 
