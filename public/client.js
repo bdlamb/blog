@@ -34,7 +34,7 @@ function doCreate(){
                 //var file=blogForm.imageInput.files[0];
                 fetch("/",{
                     method:'POST',
-                        body: formData,
+                    body: formData
                     }).then((response) => {
                         if(!response.ok){
                             displayErrorToast("Issue creating blog.It is possible another blog with that same name already exists.");
@@ -74,13 +74,13 @@ function doPatch(id){
             text: editForm.editContentInput.value,
             //image: createForm.image.files[0],
     };
+    const formData=new FormData();
+            formData.append('title',editForm.editTitleInput.value);
+            formData.append('text',editForm.editContentInput.value);
+            //formData.append('image',createForm.createImageInput.files[0]);
         fetch(`/${id}`,{
             method:'PATCH',
-            headers:{
-                'Content-type': 'application/json; charset=UTF-8',
-                'Accept': 'application/json'
-            },
-            body: JSON.stringify(content)
+            body: formData
         }).then((response) => {
             if(!response.ok){
                 displayErrorToast("Issue patching blog.It is possible another blog with that same name already exists.");

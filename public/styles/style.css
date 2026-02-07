@@ -125,6 +125,16 @@
     margin-left:1em;
 }
 
+.toast-body{
+    font-weight:bold;
+    font-size: 16pt;
+    text-align: center;
+}
+
+.tox-pop{
+    display: none;
+}
+
 .error {
         color: red;
         font-size: 0.9em;

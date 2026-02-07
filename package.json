@@ -11,6 +11,8 @@
   "license": "ISC",
   "type": "module",
   "dependencies": {
+    "ckeditor5": "^47.4.0",
+    "dotenv": "^17.2.4",
     "ejs": "^3.1.10",
     "express": "^5.2.1",
     "express-fileupload": "^1.5.2",

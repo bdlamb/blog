@@ -4,14 +4,16 @@ import pg from 'pg';
 import path from 'path';
 import os from 'os';
 import fs from 'fs';
+import dotenv from 'dotenv'
 
+dotenv.config();
 
 const app=express();
 const port=3000;
-const uploadFolder="C:\\Users\\bdlam\\OneDrive\\Documents\\myblog"
-const blogHost="localhost";
-const user ="postgres";
-const password="pass";
+const uploadFolder=process.env.UPLOAD_FOLDER;
+const blogHost=process.env.HOST;
+const user =process.env.USER;
+const password=process.env.PASSWORD;
 
 var blogData={}
 /*{"my day" : {text: "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Ut quis lobortis ex. Integer leo risus, faucibus id mi in, posuere ultricies felis. Duis tristique pretium quam et consequat. Nullam sed leo vel nunc vehicula pharetra. Integer auctor purus sit amet dapibus porta. Integer non turpis sed lectus porttitor laoreet sagittis.", image:"path.png"},
@@ -28,8 +30,8 @@ app.use(express.static("public"));
 
 const db=new pg.Client({
     host: blogHost,
-    port:5432,
-    database:"myblog",
+    port:process.env.PORT,
+    database:process.env.DATABASE,
     user:user,
     password:password
 });
@@ -99,7 +101,6 @@ app.get("/create",(req,res)=>{
 });*/
 
 app.post("/",async(req,rest)=>{
-    console.log("pppp");
     const results=await db.query("select * from blogs where title=$1",[req.body.title]);
     if(results.rowCount>0){
         rest.status(404).send(JSON.stringify({error:"Blog with that title already exists"}));
@@ -125,13 +126,9 @@ app.post("/",async(req,rest)=>{
     }
 });
 
-/*app.post("/",(req,res)=>{
-    console.log("posting");
-    res.render("index.ejs");
-});*/
-
 app.patch("/:id",async (req,res)=>{
     console.log("lllll");
+    console.log(req.body);
     var selectedBlog=((await db.query(`select * from blogs where id=$1`,[req.params.id])).rows)[0];
     if(req.body.title!=selectedBlog.title){
         var otherBlog=await db.query(`select * from blogs where title=$1`,[req.body.title]);
@@ -140,25 +137,7 @@ app.patch("/:id",async (req,res)=>{
         }
     }
     await db.query(`update blogs set title=$1, content=$2, image=$3 where id=$4`,[req.body.title,req.body.text,selectedBlog.image,req.params.id]);
-    /*if(original != req.body.title){
-        //blogData=blogData.filter(item=>!(item.title===original));
-        if(req.body.title in blogData){
-             res.status(404).send(JSON.stringify({error:"Blog with that title already exists"}));
-        }
-        else{
-            blogData[`${req.body.title}`]={text:req.body.text,image:blogData[`${original}`].image};
-            delete blogData[`${original}`];
-        }
-    }
-    else{
-        var blog=blogData[`${req.body.title}`];
-         if(req.body.text!==blogData.text){
-            blog.text=req.body.text;
-         }
-         
-    }*/
     res.status(202).send("Blog Created");
-    //res.render("index.ejs",{blogData:blogData});
 });
 
 app.delete("/",(req,res)=>{
