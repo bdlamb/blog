@@ -65,7 +65,7 @@ app.get("/:id",async (req,res) => {
     let results=await db.query("select * FROM blogs where id=$1",[req.params.id]);
     //console.log(results);
     if(results.rowCount>0){
-        res.json({id:results.rows[0].id,title:results.rows[0].title,content:results.rows[0].content});
+        res.json({id:results.rows[0].id,title:results.rows[0].title,content:results.rows[0].content,image:results.rows[0].image});
     }
     else{
         res.sendStatus(404);
@@ -130,13 +130,26 @@ app.patch("/:id",async (req,res)=>{
     console.log("lllll");
     console.log(req.body);
     var selectedBlog=((await db.query(`select * from blogs where id=$1`,[req.params.id])).rows)[0];
+    var imageFile=selectedBlog.image;
     if(req.body.title!=selectedBlog.title){
         var otherBlog=await db.query(`select * from blogs where title=$1`,[req.body.title]);
         if(otherBlog.rowCount!=0){
             res.status(404).send(JSON.stringify({error:"Blog with that title already exists"}));
         }
     }
-    await db.query(`update blogs set title=$1, content=$2, image=$3 where id=$4`,[req.body.title,req.body.text,selectedBlog.image,req.params.id]);
+    if(req.files && req.files.image){
+        console.log("updating image");
+        const uploadedFile=req.files.image;
+        const uploadPath=uploadFolder+"\\"+uploadedFile.name;
+        uploadedFile.mv(uploadPath, function (err) {
+        if (err) {
+            console.log(err);
+            res.send("Failed !!");
+        }
+        });
+        imageFile=uploadedFile.name;
+    }
+    await db.query(`update blogs set title=$1, content=$2, image=$3 where id=$4`,[req.body.title,req.body.text,imageFile,req.params.id]);
     res.status(202).send("Blog Created");
 });
 

@@ -72,11 +72,16 @@ function doPatch(id){
     let content = {
             title: editForm.editTitleInput.value,
             text: editForm.editContentInput.value,
+            currentImage:editForm.editPictureCurrent.value,
             //image: createForm.image.files[0],
     };
     const formData=new FormData();
             formData.append('title',editForm.editTitleInput.value);
             formData.append('text',editForm.editContentInput.value);
+            if(editForm.editImageInput.value){
+                formData.append('image',editForm.editImageInput.files[0]);
+            }
+            formData.append('currentImage',editForm.editPictureCurrent.value)
             //formData.append('image',createForm.createImageInput.files[0]);
         fetch(`/${id}`,{
             method:'PATCH',
@@ -193,6 +198,7 @@ function doPatch(id){
                 document.querySelector("#blogExpandedContainer").style.display="flex";
                 document.querySelector("#editTitleInput").value=res.title;
                 document.querySelector("#editContentInput").innerHTML=res.content;
+                document.querySelector("#editPictureCurrent").value=res.image;
                 document.querySelector("#blogInformationTitle").innerHTML=res.title;
                 document.querySelector("#blogInformationText").innerHTML=res.content;
                 document.querySelector("#blogExpandedContainer").style.display="flex";

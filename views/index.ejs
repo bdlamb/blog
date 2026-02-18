@@ -54,9 +54,16 @@
                         <hr style="color: green;">
                         <textarea name="text" class="content-input" id="editContentInput"></textarea>
                     </div>
+                      <div id="editImagePanel">
+                        <label>Picture</label>
+                        <label  for="editPictureCurrent" style="font-size: 12pt;">Current picture is:</p>
+                        <input id="editPictureCurrent" disabled>
+                        <label for="editImageInput" style="font-size: 22pt;">Choose a new image</label>
+                        <input required type="file" accept="image/*" id="editImageInput" name="image">
+                    </div>
                     <div id="editFormButton">
                         <button class="btn btn-success" onclick="doPatch(selected)">Update</button>
-                    </div> 
+                    </div>
                 </form>
                 <form id="createForm">
                     <div id="createFormText">
@@ -68,8 +75,7 @@
                     </div>
                     <div id="createImagePanel">
                         <label>Picture</label>
-                        <p style="font-size: 12pt;">Current picture is path.png</p>
-                        <label for="createImageInput" style="font-size: 22pt;">Choose a image</label>
+                        <label for="createImageInput" style="font-size: 22pt;">Choose a new image</label>
                         <input required type="file" accept="image/*" id="createImageInput" name="image">
                     </div>
                     <div id="editFormButton">
