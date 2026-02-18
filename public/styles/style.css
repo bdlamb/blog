@@ -6,7 +6,7 @@
 .blog-container{
     min-width: 100%;
     min-height: 200pt;
-    border:  2pt solid green;
+    border:  4pt double lightblue;
     display: inline-flex;
     padding: 0;
     margin:0;
@@ -14,6 +14,12 @@
     overflow-y: auto;
     flex-wrap: wrap;
     height: 40vh;
+    justify-content: space-between;
+}
+
+.blog-container  p{
+    margin-left: 15pt;
+    margin-right: 10pt;
 }
 
 #smallFooter{
@@ -23,6 +29,10 @@
 .start-page{
     justify-items: center;
     height: 80vh;
+}
+
+.col-6{
+    width:49%;
 }
 
 .blog-list-image{

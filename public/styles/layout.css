@@ -9,7 +9,7 @@ header{
     align-content: center;
     padding-top: 5pt;
     border-radius: 10pt;
-    border: 3pt solid lightblue;
+    border: 3pt outset lightblue;
     margin-bottom: 2pt;
 }
 
