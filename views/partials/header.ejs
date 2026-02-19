@@ -10,14 +10,7 @@
 </head>
 <body>
     <header>
-        <% if(locals.window){%>
-            <button  type="button" class="btn btn-primary" onclick="window.location.href='/'"><</button>
-           <%if(locals.title){%>
-                <button type="button" class="btn btn-danger" <%if(locals.window){%>onclick="doDelete(<%=id%>);"<%}%>>delete</button>
-            <%}%>
-        <%}else{%>
             <button type="button" class="btn btn-primary" onclick="showCreate()">new</button>
-        <%}%>
     </header>
 </body>
 </html>
